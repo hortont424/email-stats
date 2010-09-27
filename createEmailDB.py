@@ -5,28 +5,41 @@ import json
 import re
 import os
 import email
+import email.parser
 import datetime
-import codecs
 from email.utils import parsedate
 from collections import defaultdict
 from progressbar import ProgressBar, Percentage, Bar, RotatingMarker, ETA
-
-def writeFile(filename, contents):
-    out = codecs.open(filename, encoding='utf-8', mode='w+')
-    out.write(contents)
-    out.close()
-
-def readFile(filename):
-    fileHandle = codecs.open(filename, encoding='utf-8')
-    fileContents = unicode(fileHandle.read())
-    fileHandle.close()
-    return fileContents
+from util import *
 
 config = json.loads(readFile("config.json"))
 gmailRoot = os.path.expanduser(config["gmailRoot"])
 myAddresses = set([s.lower() for s in config["myAddresses"]])
 
 badEmailRegex='[a-zA-Z0-9+_\-\.]+@[0-9a-zA-Z][.-0-9a-zA-Z]*.[a-zA-Z]+'
+
+metacontactMapping = {}
+metacontactExpressions = {}
+for metacontact in config["metacontacts"]:
+    if "addresses" in metacontact:
+        for addr in metacontact["addresses"]:
+            metacontactMapping[addr] = metacontact["name"]
+    if "expressions" in metacontact:
+        for expr in metacontact["expressions"]:
+            metacontactExpressions[expr] = metacontact["name"]
+
+###
+
+def mapAddress(addr):
+    if addr in metacontactMapping:
+        addr = metacontactMapping[addr]
+    for expr in metacontactExpressions:
+        if re.match(expr, addr):
+            addr = metacontactExpressions[expr]
+
+    return addr
+
+###
 
 lostEmailsAddresses = lostEmailsDate = 0
 sentAddressCounts = defaultdict(int)
@@ -47,11 +60,13 @@ for root, dirs, files in os.walk(gmailRoot):
 progress = ProgressBar(widgets=["Parsing Mail: ", Percentage(), " ", Bar(), " ", ETA()],
                        maxval=len(emailFiles)).start()
 
+parser = email.parser.Parser()
+
 for filename in emailFiles:
     progress.update(progress.currval + 1)
 
     fh = open(filename, 'rb')
-    message = email.message_from_string(fh.read(int(fh.readline().strip())))
+    message = parser.parsestr(fh.read(int(fh.readline().strip())), headersonly=True)
     fh.close()
 
     toString = message["to"]
@@ -61,8 +76,10 @@ for filename in emailFiles:
         lostEmailsAddresses += 1
         continue
 
-    toAddresses = set(re.findall(badEmailRegex, toString.lower().replace("\n", " ")))
-    fromAddresses = set(re.findall(badEmailRegex, fromString.lower().replace("\n", " ")))
+    toAddresses = set([mapAddress(a) for a in re.findall(badEmailRegex, toString.lower().replace("\n", " "))])
+    fromAddresses = set([mapAddress(a) for a in re.findall(badEmailRegex, fromString.lower().replace("\n", " "))])
+
+    myAddresses.add("Me")
 
     if fromAddresses.intersection(myAddresses):
         sentMessage = True
