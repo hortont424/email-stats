@@ -5,7 +5,7 @@ import json
 from operator import itemgetter
 from util import *
 
-recievedAddressCounts = json.loads(readFile("recievedAddressCounts.json"))
+receivedAddressCounts = json.loads(readFile("receivedAddressCounts.json"))
 sentAddressCounts = json.loads(readFile("sentAddressCounts.json"))
 
 for (addr, count) in sorted(sentAddressCounts.items(), key=itemgetter(1)):

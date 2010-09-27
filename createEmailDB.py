@@ -46,9 +46,9 @@ def mapAddress(addr):
 
 lostEmailsAddresses = lostEmailsDate = 0
 sentAddressCounts = defaultdict(int)
-recievedAddressCounts = defaultdict(int)
+receivedAddressCounts = defaultdict(int)
 sentDateAddressCounts = defaultdict(lambda : defaultdict(int))
-recievedDateAddressCounts = defaultdict(lambda : defaultdict(int))
+receivedDateAddressCounts = defaultdict(lambda : defaultdict(int))
 foreignAddresses = set()
 
 emailFiles = []
@@ -91,9 +91,9 @@ for filename in emailFiles:
             sentAddressCounts[addr] += 1
     else:
         sentMessage = False
-        # This is a recieved message
+        # This is a received message
         for addr in fromAddresses:
-            recievedAddressCounts[addr] += 1
+            receivedAddressCounts[addr] += 1
 
     foreignAddresses.update(fromAddresses.union(toAddresses).difference(myAddresses))
 
@@ -118,13 +118,13 @@ for filename in emailFiles:
             sentDateAddressCounts[messageDate][addr] += 1
     else:
         for addr in fromAddresses:
-            recievedDateAddressCounts[messageDate][addr] += 1
+            receivedDateAddressCounts[messageDate][addr] += 1
 
 progress.finish()
 
 writeFile("foreignAddresses.json", json.dumps(list(foreignAddresses)))
 writeFile("sentAddressCounts.json", json.dumps(dict(sentAddressCounts)))
-writeFile("recievedAddressCounts.json", json.dumps(dict(recievedAddressCounts)))
+writeFile("receivedAddressCounts.json", json.dumps(dict(receivedAddressCounts)))
 writeFile("sentDateAddressCounts.json", json.dumps(sentDateAddressCounts))
-writeFile("recievedDateAddressCounts.json", json.dumps(recievedDateAddressCounts))
+writeFile("receivedDateAddressCounts.json", json.dumps(receivedDateAddressCounts))
 writeFile("metadata.json", json.dumps({"lostEmailsAddresses": lostEmailsAddresses, "lostEmailsDate": lostEmailsDate}))
