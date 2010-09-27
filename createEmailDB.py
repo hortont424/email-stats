@@ -4,7 +4,7 @@
 import json
 import re
 import os
-import emlx
+import email
 import datetime
 import codecs
 from email.utils import parsedate
@@ -16,8 +16,16 @@ def writeFile(filename, contents):
     out.write(contents)
     out.close()
 
-gmailRoot = os.path.expanduser("~/Library/Mail/IMAP-hortont424@imap.gmail.com/[Gmail]/All Mail.imapmbox/Messages")
-myAddresses = set([s.lower() for s in ["hortont424@gmail.com", "hortot2@rpi.edu", "tim@hortont.com", "hortont@svn.gnome.org", "thorton@qualcomm.com", "hortont@git.gnome.org", "hortont@gnome.org", "rhorton16@adelphia.net", "rhorton16@comcast.net", "tphorton@uvm.edu", "internote-andros@lists.sourceforge.net"]])
+def readFile(filename):
+    fileHandle = codecs.open(filename, encoding='utf-8')
+    fileContents = unicode(fileHandle.read())
+    fileHandle.close()
+    return fileContents
+
+config = json.loads(readFile("config.json"))
+gmailRoot = os.path.expanduser(config["gmailRoot"])
+myAddresses = set([s.lower() for s in config["myAddresses"]])
+
 badEmailRegex='[a-zA-Z0-9+_\-\.]+@[0-9a-zA-Z][.-0-9a-zA-Z]*.[a-zA-Z]+'
 
 lostEmailsAddresses = lostEmailsDate = 0
@@ -42,10 +50,12 @@ progress = ProgressBar(widgets=["Parsing Mail: ", Percentage(), " ", Bar(), " ",
 for filename in emailFiles:
     progress.update(progress.currval + 1)
 
-    email = emlx.emlx(filename)
+    fh = open(filename, 'rb')
+    message = email.message_from_string(fh.read(int(fh.readline().strip())))
+    fh.close()
 
-    toString = email.message["to"]
-    fromString = email.message["from"]
+    toString = message["to"]
+    fromString = message["from"]
 
     if (not toString) or (not fromString):
         lostEmailsAddresses += 1
@@ -67,7 +77,7 @@ for filename in emailFiles:
 
     foreignAddresses.update(fromAddresses.union(toAddresses).difference(myAddresses))
 
-    messageDate = parsedate(email.message["date"])
+    messageDate = parsedate(message["date"])
 
     if (not messageDate):
         lostEmailsDate += 1
