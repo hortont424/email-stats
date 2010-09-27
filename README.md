@@ -1,3 +1,5 @@
+THERE IS CURRENTLY NO DOCUMENTATION, SO YOU CAN'T MAKE A CONFIG FILE :-D
+
 * Per-month totals
 * Per-month per-person totals
 * Delta in send/receive counts per-person overall
