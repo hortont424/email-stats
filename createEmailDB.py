@@ -16,7 +16,7 @@ config = json.loads(readFile("config.json"))
 gmailRoot = os.path.expanduser(config["gmailRoot"])
 myAddresses = set([s.lower() for s in config["myAddresses"]])
 
-badEmailRegex='[a-zA-Z0-9+_\-\.]+@[0-9a-zA-Z][.-0-9a-zA-Z]*.[a-zA-Z]+'
+badEmailRegex='[\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4}'
 
 metacontactMapping = {}
 metacontactExpressions = {}
