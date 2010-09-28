@@ -12,6 +12,8 @@ STATSFILES = output/totalPerMonth.pdf \
 
 CONFIGFILE = config/config.json
 
+all: $(DBFILES) $(STATSFILES)
+
 output/%.pdf:: src/%.py $(DBFILES)
 	mkdir -p output
 	python $<
@@ -19,8 +21,6 @@ output/%.pdf:: src/%.py $(DBFILES)
 $(DBFILES): $(CONFIGFILE) src/main.py src/util.py
 	mkdir -p db
 	python ./src/main.py
-
-all: $(DBFILES) $(STATSFILES)
 
 clean:
 	rm -f $(DBFILES)
