@@ -43,4 +43,6 @@ temp = NamedTemporaryFile(suffix=".csv", delete=False)
 temp.write(csvdata)
 temp.close()
 
+# TODO: delete CSV when done
+
 mathematica(plot.replace("$TEMPORARY_FILE_NAME", temp.name))

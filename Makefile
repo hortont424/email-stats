@@ -7,12 +7,13 @@ DBFILES = db/foreignAddresses.json \
           db/sentAddressCounts.json \
           db/sentDateAddressCounts.json
 
-STATSFILES = output/totalPerMonth.pdf
+STATSFILES = output/totalPerMonth.pdf \
+             output/cumulativeTotals.pdf
 
 CONFIGFILE = config/config.json
 
 output/%.pdf:: src/%.py $(DBFILES)
-	mkdir -p ./output
+	mkdir -p output
 	python $<
 
 $(DBFILES): $(CONFIGFILE) src/main.py src/util.py
