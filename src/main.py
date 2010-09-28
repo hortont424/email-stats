@@ -2,8 +2,8 @@
 # encoding: utf-8
 
 import json
+import sys
 import os
-import email
 import re
 import email.parser
 import datetime
@@ -25,6 +25,14 @@ def extractEmailAddresses(addressString):
 def mapEmailAddresses(config, addresses):
     """
     Given an email address, map it to the matching metacontact if one exists.
+
+    >>> config = Configuration()
+    >>> config.load("config/config.json")
+    >>> for addr in config.myAddresses:
+    ...     print "".join(mapEmailAddresses(config, [addr]))
+    ...     break
+    Me
+
     """
     return set([config.mapAddress(a) for a in addresses])
 
@@ -64,6 +72,13 @@ def validateEmailDate(messageDate):
     This makes some assumptions: years less than 1900 should be bumped up by 2000,
     to solve the case where we only have two digits (this works for my mail, since it's all
     post-2003); years greater than the current year are invalid and rejected.
+
+    >>> validateEmailDate("Sun, 15 May 05 12:23:34")
+    '2005.05.15'
+
+    >>> validateEmailDate("Mon, 02 December 2002 12:23:34")
+    '2002.12.02'
+
     """
     messageDate = email.utils.parsedate(messageDate)
 
@@ -152,4 +167,8 @@ def main():
     stats.save()
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 2 and sys.argv[1] == "--test":
+        import doctest
+        doctest.testmod()
+    else:
+        main()
