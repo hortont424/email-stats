@@ -22,6 +22,6 @@ $(DBFILES): $(CONFIGFILE) src/main.py src/util.py
 all: $(DBFILES) $(STATSFILES)
 
 clean:
-	rm -rf ./output
-	rm -rf ./db
+	rm -f $(DBFILES)
+	rm -f $(STATSFILES)
 	rm -f ./src/*.pyc
