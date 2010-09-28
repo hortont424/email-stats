@@ -91,7 +91,7 @@ def updateStatistics(stats, config, filename):
     """
     message = readEmailHeaders(filename)
 
-    toString = message["to"] + " " + message["cc"]
+    toString = "{0} {1}".format(message["to"], message["cc"])
     fromString = message["from"]
 
     # We require To and From headers
