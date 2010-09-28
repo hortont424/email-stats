@@ -1,30 +1,30 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import json
 from tempfile import NamedTemporaryFile
 from collections import defaultdict
+from statistics import Statistics
 from util import *
 
 plot = """
 data = Drop[Sort[Import["$TEMPORARY_FILE_NAME"]], -1];
 received = {DateList[#[[1]]], #[[2]]} & /@ data;
 sent = {DateList[#[[1]]], #[[3]]} & /@ data;
-Export["totalPerMonth.pdf", DateListPlot[{received, sent}, Joined -> True, PlotStyle -> Thick]];
+Export["output/totalPerMonth.pdf", DateListPlot[{received, sent}, Joined -> True, PlotStyle -> Thick]];
 Exit[];
 """
 
-receivedDateAddressCounts = json.loads(readFile("receivedDateAddressCounts.json"))
-sentDateAddressCounts = json.loads(readFile("sentDateAddressCounts.json"))
+stats = Statistics()
+stats.load()
 
 dateTotals = defaultdict(lambda : defaultdict(int))
 csvdata = ""
 
-for (date, addresses) in receivedDateAddressCounts.items():
+for (date, addresses) in stats.receivedDateAddressCounts.items():
     date = ".".join(date.split(".")[:2] + ["1"])
     dateTotals[date]["received"] += sum([count for (addr, count) in addresses.items()])
 
-for (date, addresses) in sentDateAddressCounts.items():
+for (date, addresses) in stats.sentDateAddressCounts.items():
     date = ".".join(date.split(".")[:2] + ["1"])
     dateTotals[date]["sent"] += sum([count for (addr, count) in addresses.items()])
 

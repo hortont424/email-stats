@@ -1,16 +1,17 @@
-.PHONY: all clean
+.PHONY: all clean db
 
-all:
-	python ./createEmailDB.py
-	python ./totalPerMonth.py
-	python ./totalEmails.py
+all: db stats
+
+db:
+	mkdir -p db
+	python ./src/main.py
+
+stats:
+	mkdir -p output
+	python ./src/totalPerMonth.py
+	python ./src/totalEmails.py
 
 clean:
-	rm -f *.pdf
-	rm -f foreignAddresses.json
-	rm -f metadata.json
-	rm -f receivedAddressCounts.json
-	rm -f receivedDateAddressCounts.json
-	rm -f sentAddressCounts.json
-	rm -f sentDateAddressCounts.json
-	rm -f *.pyc
+	rm -rf ./output
+	rm -rf ./db
+	rm -f ./src/*.pyc
