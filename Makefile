@@ -8,7 +8,8 @@ DBFILES = db/foreignAddresses.json \
           db/sentDateAddressCounts.json
 
 STATSFILES = output/totalPerMonth.pdf \
-             output/cumulativeTotals.pdf
+             output/cumulativeTotals.pdf \
+             output/relationshipSidedness.pdf
 
 CONFIGFILE = config/config.json
 

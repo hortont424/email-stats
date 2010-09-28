@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import os
 from tempfile import NamedTemporaryFile
 from statistics import Statistics
 from util import *
@@ -37,6 +38,7 @@ sentTemp = NamedTemporaryFile(suffix=".csv", delete=False)
 sentTemp.write(sentCSV)
 sentTemp.close()
 
-# TODO: delete CSV when done
-
 mathematica(plot.replace("$RECEIVED_TEMPORARY_FILE_NAME", receivedTemp.name).replace("$SENT_TEMPORARY_FILE_NAME", sentTemp.name))
+
+os.remove(sentTemp.name)
+os.remove(receivedTemp.name)

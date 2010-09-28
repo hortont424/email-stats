@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import os
 from operator import itemgetter
 from statistics import Statistics
+from util import *
 
 stats = Statistics()
 stats.load()
