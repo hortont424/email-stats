@@ -122,6 +122,11 @@ def updateStatistics(stats, config, filename):
     # we are the originator of the message
     if fromAddresses.intersection(config.myAddresses):
         sentMessage = True
+
+        # Skip draft messages which were added to "Sent" by Mail.app in the 2.0-3.0 era
+        if "X-Apple-Base-Url" in message:
+            return
+
         # This is a sent message
         for addr in toAddresses:
             stats.sentAddressCounts[addr] += 1
