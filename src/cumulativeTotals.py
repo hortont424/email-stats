@@ -9,7 +9,8 @@ from util import *
 plot = """
 received = Drop[Sort[Import["$RECEIVED_TEMPORARY_FILE_NAME"]], -1];
 sent = Drop[Sort[Import["$SENT_TEMPORARY_FILE_NAME"]], -1];
-Export["output/cumulativeTotals.pdf", DateListPlot[{received, sent}, Joined -> True, PlotStyle -> Thick]];
+Export["output/cumulativeTotals.pdf",
+    DateListPlot[{received, sent}, Joined -> True, PlotStyle -> Thick, PlotRange -> All], ImageSize->600];
 Exit[];
 """
 
